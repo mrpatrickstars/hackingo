@@ -1,0 +1,33 @@
+HACKINGO PROPRIETARY LICENSE
+Copyright (c) 2026 Hackingo
+
+1. Ownership
+All source code, website content, graphics, lesson content, branding, and other original materials included in this project are owned by the copyright holder unless otherwise stated.
+
+2. Permission
+You may view, download, and run this project for personal, educational, and non-commercial purposes.
+
+3. Restrictions
+Without prior written permission from the copyright holder, you may NOT:
+- Sell, sublicense, or commercially distribute this project or substantial portions of its source code.
+- Rehost, mirror, or redistribute the project as your own product.
+- Remove copyright or ownership notices.
+- Copy the project or substantially similar portions of it into a competing commercial product.
+- Use the Hackingo name, logo, or branding to imply that your project is officially affiliated with Hackingo.
+
+4. Commercial Use
+Commercial use, including selling access to the website, incorporating substantial portions of the source code into a commercial product, or offering modified versions as a paid service, requires a separate commercial license from the copyright holder.
+
+5. Contributions
+Unless a separate written agreement says otherwise, contributions submitted to this project may be used, modified, and distributed by the copyright holder as part of Hackingo.
+
+6. Third-Party Materials
+This license does not override the licenses of third-party libraries, fonts, assets, or other materials that may be included or referenced by the project. Those materials remain subject to their respective licenses.
+
+7. No Warranty
+This project is provided "as is", without warranties of any kind, to the maximum extent permitted by law.
+
+8. Contact
+For commercial licensing or permission requests, contact the copyright holder through the contact information provided in the project repository.
+
+This license is intended as a general project license and is not legal advice.

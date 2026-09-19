@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hackingo — Learn Ethical Hacking</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f4f6f8;color:#222}
+header{height:70px;background:#fff;border-bottom:2px solid #ddd;display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:10}
+.logo{font-size:28px;font-weight:bold;color:#22a06b}.stats{display:flex;gap:22px;font-weight:bold}.app{display:flex;min-height:calc(100vh - 70px)}
+.sidebar{width:240px;background:#fff;border-right:2px solid #ddd;padding:25px 15px}.sidebar button{width:100%;padding:14px;margin-bottom:10px;border:0;border-radius:10px;background:transparent;text-align:left;font-size:16px;cursor:pointer}.sidebar button:hover{background:#eaf8f1}
+.main{flex:1;max-width:1000px;margin:auto;padding:35px}.welcome,.lesson-card,.reader,.quiz{background:#fff;border-radius:18px;padding:30px;box-shadow:0 3px 10px #00000012;margin-bottom:22px}
+.welcome h1{margin:10px 0}.badge{display:inline-block;padding:6px 10px;background:#eaf8f1;color:#168552;border-radius:8px;font-size:12px;font-weight:bold}
+.progress{height:14px;background:#ddd;border-radius:20px;overflow:hidden;margin-top:8px}.progress-bar{height:100%;width:0;background:#22a06b;transition:.4s}
+.lessons{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}.lesson-card{cursor:pointer;border-bottom:5px solid #ddd;transition:.2s}.lesson-card:hover{transform:translateY(-3px)}.lesson-card.locked{opacity:.5;cursor:not-allowed}.icon{font-size:38px;margin-bottom:10px}.lesson-card p{color:#666;margin-top:7px}.xp{margin-top:14px;color:#b87500;font-weight:bold}
+.reader,.quiz{display:none}.reader h2,.quiz h2{margin:10px 0 15px}.reader p{line-height:1.65;margin:13px 0}.code{background:#17202a;color:#f1f1f1;border-radius:10px;padding:18px;font-family:Consolas,monospace;white-space:pre-wrap;margin:18px 0;overflow:auto}
+.tip{padding:15px;border-left:5px solid #22a06b;background:#eefaf4;margin:18px 0;border-radius:8px}.btn{padding:14px 22px;border:0;border-radius:10px;background:#22a06b;color:#fff;font-size:16px;font-weight:bold;cursor:pointer}.btn.secondary{background:#667085}.question{font-size:21px;margin:22px 0}.answers{display:grid;gap:12px}.answer{padding:15px;border:2px solid #ddd;border-radius:12px;background:#fff;text-align:left;font-size:16px;cursor:pointer}.answer:hover{border-color:#22a06b}.correct{background:#d9f8e8!important;border-color:#22a06b!important}.wrong{background:#ffe1e1!important;border-color:#e04444!important}.result{margin-top:18px;font-weight:bold;font-size:18px}.continue{margin-top:22px}.back{margin-bottom:15px}
+@media(max-width:700px){.sidebar{display:none}.main{padding:18px}header{padding:0 15px}.stats{gap:8px;font-size:12px}.logo{font-size:22px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🛡️ Hackingo</div>
+  <div class="stats">🔥 <span id="streak">1</span> &nbsp; 💎 <span id="gems">50</span> &nbsp; ❤️ <span id="hearts">5</span> &nbsp; ⭐ <span id="xp">0</span> XP</div>
+</header>
+
+<div class="app">
+<aside class="sidebar">
+<button onclick="home()">🏠 Learn</button>
+<button onclick="alert('Practice mode will contain safe sandbox challenges.')">🎯 Practice</button>
+<button onclick="alert('Leaderboard coming soon!')">🏆 Leaderboard</button>
+<button onclick="alert('Achievements coming soon!')">🏅 Achievements</button>
+</aside>
+
+<main class="main">
+<section id="homeScreen">
+<div class="welcome">
+<span class="badge">ETHICAL HACKING</span>
+<h1>Learn cybersecurity by doing 🔐</h1>
+<p>Read the lesson, study real code, answer questions, and unlock harder topics.</p>
+<div style="margin-top:20px">Level 1 progress</div>
+<div class="progress"><div class="progress-bar" id="progress"></div></div>
+</div>
+
+<h2 style="margin:20px 0 15px">Learning Path</h2>
+<div class="lessons" id="lessonList"></div>
+</section>
+
+<section class="reader" id="reader">
+<button class="btn secondary back" onclick="home()">← Back</button>
+<span class="badge" id="readerBadge"></span>
+<h2 id="readerTitle"></h2>
+<div id="readerContent"></div>
+<button class="btn" onclick="beginQuiz()">Take the quiz →</button>
+</section>
+
+<section class="quiz" id="quiz">
+<span class="badge" id="quizBadge"></span>
+<h2 id="quizTitle"></h2>
+<div class="question" id="question"></div>
+<div class="answers" id="answers"></div>
+<div class="result" id="result"></div>
+<button class="btn continue" id="continueBtn" onclick="nextQuestion()" disabled>Continue</button>
+</section>
+</main>
+</div>
+
+<script>
+const lessons=[
+{title:"Networking",icon:"🌐",desc:"IPs, ports, DNS, TCP and UDP.",content:`
+<p>Networking is the foundation of cybersecurity. Computers communicate using protocols, addresses, and numbered ports.</p>
+<h3>IP addresses</h3>
+<p>An IP address identifies a device or network interface on a network. IPv4 addresses look like <b>192.168.1.10</b>.</p>
+<h3>Ports</h3>
+<p>A port identifies a service or application endpoint. HTTPS commonly uses port <b>443</b>, while HTTP commonly uses <b>80</b>.</p>
+<h3>DNS</h3>
+<p>DNS translates human-friendly domain names into IP addresses.</p>
+<div class="code">example.com  →  DNS  →  93.184.216.34</div>
+<div class="tip">🛡️ Ethical rule: only scan or test systems when you have permission. Use your own machines or dedicated training labs.</div>`},
+{title:"Linux Basics",icon:"🐧",desc:"Terminal commands, files and permissions.",content:`
+<p>Linux is widely used in cybersecurity. The terminal lets you interact with the operating system through commands.</p>
+<h3>Useful commands</h3>
+<div class="code">pwd
+ls
+cd Documents
+mkdir practice
+cat notes.txt</div>
+<p><b>pwd</b> shows your current directory. <b>ls</b> lists files. <b>cd</b> changes directories. <b>mkdir</b> creates a directory.</p>
+<h3>Reading code</h3>
+<p>Being able to understand code is an important security skill. Start by identifying inputs, outputs, variables, and control flow.</p>
+<div class="code">name = "student"
+print("Hello, " + name)</div>
+<p>This Python program stores a value in <b>name</b>, then prints a greeting.</p>`},
+{title:"Passwords & MFA",icon:"🔑",desc:"Authentication, hashing and account security.",content:`
+<p>Authentication answers the question: “Who are you?” Passwords are one authentication factor, but strong security often uses multiple factors.</p>
+<h3>Strong passwords</h3>
+<p>Long, unique passwords are generally harder to guess. Never reuse an important password across multiple services.</p>
+<h3>MFA</h3>
+<p>Multi-factor authentication adds another verification factor, such as a security key or authenticator code.</p>
+<div class="code">Password
+   +
+Authenticator code
+   =
+MFA</div>
+<div class="tip">💡 In security labs, you'll learn why weak passwords fail and how defenders can protect authentication systems.</div>`},
+{title:"Web Security",icon:"🌍",desc:"HTTP, cookies, sessions and common vulnerabilities.",content:`
+<p>Web applications communicate using HTTP requests and responses. Understanding that communication is essential for web security.</p>
+<div class="code">GET /profile HTTP/1.1
+Host: example.test
+Cookie: session=abc123</div>
+<p>Cookies can store information associated with a browser session. Security flags such as Secure and HttpOnly can reduce certain risks.</p>
+<h3>Safe practice</h3>
+<p>Practice web security only on applications you own or intentionally vulnerable training targets. Never test random websites without authorization.</p>`},
+{title:"Cryptography",icon:"🔐",desc:"Encryption, hashing and digital signatures.",content:`
+<p>Cryptography protects information and communications.</p>
+<h3>Encryption vs hashing</h3>
+<p>Encryption is designed to be reversible with the appropriate key. Hashing is designed as a one-way transformation and is commonly used for integrity checks and password storage.</p>
+<div class="code">Plaintext
+   ↓
+Hash function
+   ↓
+Hash value</div>
+<p>Modern password storage uses dedicated password-hashing algorithms with salts rather than storing plaintext passwords.</p>`},
+{title:"CTF Foundations",icon:"🧪",desc:"Solve safe cybersecurity puzzles in sandbox labs.",content:`
+<p>Capture-the-Flag (CTF) challenges are controlled puzzles designed to teach security skills.</p>
+<p>Challenges can involve reading code, finding bugs in intentionally vulnerable programs, decoding data, analyzing logs, or understanding network traffic.</p>
+<div class="tip">🏁 This course is designed around legal practice environments. The goal is to understand how vulnerabilities work so you can find and fix them responsibly.</div>
+<p>Later levels can add interactive sandbox challenges where the target is deliberately built for practice.</p>`}
+];
+
+const questions=[
+[
+["What does DNS primarily do?",["Encrypt files","Translate domain names to IP addresses","Create passwords","Scan viruses"],1],
+["Which port is commonly used by HTTPS?",["21","22","80","443"],3],
+["What is a port used to identify?",["A service endpoint","A password","A monitor","A keyboard"],0]
+],
+[
+["Which command lists files in Linux?",["ls","cd","pwd","mkdir"],0],
+["Which command changes directories?",["mv","cd","cat","grep"],1],
+["What does pwd show?",["Your current directory","Your password","Running processes","Network traffic"],0]
+],
+[
+["What does MFA mean?",["Multiple File Access","Multi-Factor Authentication","Managed Firewall Access","Main Function Authorization"],1],
+["Which password is strongest?",["password123","qwerty","Summer2026","v7!Qz#91Lm@2"],3],
+["Why should passwords be unique?",["They look better","One stolen password cannot unlock multiple accounts","They increase internet speed","They use less storage"],1]
+],
+[
+["What protocol is used for web requests?",["HTTP","FTP only","SMTP only","Bluetooth"],0],
+["What can a cookie help maintain?",["A web session","A GPU driver","A BIOS update","A printer queue"],0],
+["Where should you practice web attacks?",["Random websites","Authorized labs","Your friend's website","Any public server"],1]
+],
+[
+["What is hashing designed to be?",["One-way","Always reversible","A network cable","A login screen"],0],
+["What does encryption normally require to decrypt?",["The appropriate key","A monitor","DNS","A port number"],0],
+["What is a salt commonly used for?",["Password hashing","Making Wi-Fi faster","Opening ports","Changing IP addresses"],0]
+],
+[
+["What is a CTF?",["A controlled security challenge","A type of password","A web browser","A network cable"],0],
+["Where should a beginner practice security testing?",["Authorized sandbox","Random company server","Someone else's account","Public Wi-Fi devices"],0],
+["What is the goal of ethical security testing?",["Improve security","Steal accounts","Damage systems","Hide attacks"],0]
+]
+];
+
+let xp=Number(localStorage.getItem("hackingoXP")||0), hearts=5, current=0, q=0, answered=false;
+
+function renderLessons(){
+ const list=document.getElementById("lessonList"); list.innerHTML="";
+ lessons.forEach((l,i)=>{
+   const unlocked=i===0 || xp>=i*30;
+   list.innerHTML+=`<div class="lesson-card ${unlocked?'':'locked'}" onclick="${unlocked?`openLesson(${i})`:''}">
+   <div class="icon">${l.icon}</div><h3>${i+1}. ${l.title}</h3><p>${l.desc}</p>
+   <div class="xp">${unlocked?'+10 XP':'🔒 Locked — earn more XP'}</div></div>`;
+ });
+ document.getElementById("xp").textContent=xp;
+ document.getElementById("progress").style.width=Math.min(xp/180*100,100)+"%";
+}
+function home(){document.getElementById("homeScreen").style.display="block";document.getElementById("reader").style.display="none";document.getElementById("quiz").style.display="none";renderLessons()}
+function openLesson(i){current=i;document.getElementById("homeScreen").style.display="none";document.getElementById("quiz").style.display="none";document.getElementById("reader").style.display="block";document.getElementById("readerBadge").textContent="LESSON "+(i+1);document.getElementById("readerTitle").textContent=lessons[i].title;document.getElementById("readerContent").innerHTML=lessons[i].content}
+function beginQuiz(){q=0;document.getElementById("reader").style.display="none";document.getElementById("quiz").style.display="block";loadQuestion()}
+function loadQuestion(){
+ answered=false;let data=questions[current][q];document.getElementById("quizBadge").textContent=`QUESTION ${q+1}/${questions[current].length}`;document.getElementById("quizTitle").textContent=lessons[current].title;document.getElementById("question").textContent=data[0];document.getElementById("result").textContent="";document.getElementById("continueBtn").disabled=true;let a=document.getElementById("answers");a.innerHTML="";data[1].forEach((x,i)=>{let b=document.createElement("button");b.className="answer";b.textContent=x;b.onclick=()=>answer(i,b);a.appendChild(b)})}
+function answer(i,b){
+ if(answered)return;answered=true;let data=questions[current][q],buttons=document.querySelectorAll(".answer");
+ if(i===data[2]){b.classList.add("correct");xp+=10;document.getElementById("result").textContent="✅ Correct! +10 XP"}else{b.classList.add("wrong");buttons[data[2]].classList.add("correct");hearts--;document.getElementById("hearts").textContent=hearts;document.getElementById("result").textContent="❌ Incorrect — review the lesson and try again."}
+ localStorage.setItem("hackingoXP",xp);document.getElementById("xp").textContent=xp;document.getElementById("continueBtn").disabled=false
+}
+function nextQuestion(){q++;if(q>=questions[current].length){alert(`🎉 Lesson complete! You earned XP.\nCurrent XP: ${xp}`);home()}else loadQuestion()}
+renderLessons();
+</script>
+</body>
+</html>
